@@ -24,6 +24,8 @@ class Segment:
             return temperature_payload.TemperaturePayload(seg_date, **payload)
         elif payload_type == PayloadTypes.ultrasound:
             return ultrasound_payload.UltrasoundPayload(**payload)
+        elif payload_type == PayloadTypes.example:
+            return example_payload.ExamplePayload(**payload)
 
     def to_dict(self):
         return {

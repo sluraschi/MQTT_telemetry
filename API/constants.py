@@ -1,5 +1,8 @@
 from enum import Enum
 
+EXAMPLE_DATABASE_HOST = 
+EXAMPLE_DATABASE = 
+
 SEISMIC_DATABASE_HOST = "ec2-174-129-254-216.compute-1.amazonaws.com"
 SEISMIC_DATABASE = "dffja4igmjagb2"
 
@@ -21,3 +24,4 @@ class PayloadTypes(Enum):
     seismic = 1
     temp_and_hum = 2
     ultrasound = 3
+    example = 4

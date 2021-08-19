@@ -25,22 +25,8 @@ CREATE TABLE measurement (
 	payload_uuid UUID NOT NULL DEFAULT uuid_generate_v1(),
 	segment_id numeric,
 	package_id numeric,
-	date TIMESTAMP NOT NULL,
-	distance numeric,
-	
-	PRIMARY KEY (payload_uuid),
-	FOREIGN KEY (segment_id) 
-		REFERENCES segment(id),
-	FOREIGN KEY (package_id) 
-		REFERENCES package(id)
-);
-
-CREATE TABLE measurement (
-	payload_uuid UUID NOT NULL DEFAULT uuid_generate_v1(),
-	segment_id numeric,
-	package_id numeric,
-	date TIMESTAMP NOT NULL,
 	-- replace here the columns for your use case
+	date TIMESTAMP NOT NULL,
 	position numeric,
 	temperature numeric,
 	
