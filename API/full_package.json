@@ -1,0 +1,48 @@
+{
+    "Db_connection": {
+        "db_id": "rqalxjjwytlbpa",
+        "db_pass": "ae2da8dade7014ca5e1f6cc5af99b995ebc39f47035079b316e2101b9cdcba78"
+    },
+    "package": {
+        "package_id": "00001",
+        "package_len": "018008580",
+        "package_date": "20191011172018",
+        "segments": [
+            {
+                "segment_id": "001",
+                "segment_date": "20191011172018",
+                "segment_microsec": "00000",
+                "segment_rate": "0500",
+                "flag1": "flag1",
+                "flag2": "flag2",
+                "flag3": "flag3",
+                "flag4": "flag4",
+                "payload": {
+                    "time": 1025,
+                    "magnetic_field_x": 1,
+                    "magnetic_field_y": 2,
+                    "magnetic_field_z": 3,
+                    "acc": "acc"
+                }
+            },
+            {
+                "segment_id": "002",
+                "segment_date": "20191011172018",
+                "segment_microsec": "00000",
+                "segment_rate": "0500",
+                "flag1": "flag1",
+                "flag2": "flag2",
+                "flag3": "flag3",
+                "flag4": "flag4",
+                "payload": {
+                    "time": 1030,
+                    "magnetic_field_x": 4,
+                    "magnetic_field_y": 5,
+                    "magnetic_field_z": 6,
+                    "acc": "acc"
+                }
+            }
+
+        ]
+    }
+}

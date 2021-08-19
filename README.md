@@ -143,7 +143,7 @@ CREATE TABLE measurement (
 
 El sistema esta pensado para funcionar con el mismo broker luego de su creación y poder cambiar facilmente el tópico al que publica si se cambiará la aplicación del equipo. 
 
-El broker se configura en el archivo [_config.py_]() con el host y usuario de acceso que se indica en el broker:
+El broker se configura en el archivo [_config.py_](/Publisher/config.py) con el host y usuario de acceso que se indica en el broker:
 
 ![new-vars](imagenes/detail-broker.png)
 
@@ -178,7 +178,7 @@ class Topics(Enum):
 
 <a name="nuevo-modelo"></a>
 
-2. Ahora que puede recibir mensajes del tópico es necesario agregar un módelo para validar la recepción. Para eso vamos a crear un archivo *XXXX_payload.py* dentro de la carpeta [models](). En nuestro ejemplo lo vamos a llamar *example_payload.py* y dentro del mismo es necesario definir su clase **que debe heredar la clase Payload** y tener: 
+2. Ahora que puede recibir mensajes del tópico es necesario agregar un módelo para validar la recepción. Para eso vamos a crear un archivo *XXXX_payload.py* dentro de la carpeta [model](/Suscriber/model). En nuestro ejemplo lo vamos a llamar *example_payload.py* ([aquí](/Suscriber/model/example_payload.py)) y dentro del mismo es necesario definir su clase **que debe heredar la clase Payload** y tener: 
 	a) un metodo _parse_payload()_ que defina como se deben leer los datos del payload, 
 	b) un constructor que lo utilice,
 	b) una clase Enum con las etiquetas,
@@ -226,7 +226,7 @@ class ExamplePayloadTags(Enum): # (6) Los tags para usar en el diccionario y no 
 
 ```
 
-3. Una vez creado el modelo y sus reglas de parseo hay que agregar la orden para qu en cada recepción se construya y efectivamente se valide el formato. Esto se hace en el archivo [segments.py](), en el método `build_payload()`. Nuevamente puede extenderse para funcionar para este modelo y otros o reeplazar alguno de los existentes en el codigo que ya no se utilicen. Si lo extendemos es simplemente agregar las siguientes lineas, donde es importante destacar que se hace referencia al topico agregado [aqui](#nuevo-topico):
+3. Una vez creado el modelo y sus reglas de parseo hay que agregar la orden para qu en cada recepción se construya y efectivamente se valide el formato. Esto se hace en el archivo [segments.py](/Suscriber/model/segments.py), en el método `build_payload()`. Nuevamente puede extenderse para funcionar para este modelo y otros o reeplazar alguno de los existentes en el codigo que ya no se utilicen. Si lo extendemos es simplemente agregar las siguientes lineas, donde es importante destacar que se hace referencia al topico agregado [aqui](#nuevo-topico):
 
 ```
         elif payload_type == Topics.EXAMPLE.value:
@@ -234,7 +234,7 @@ class ExamplePayloadTags(Enum): # (6) Los tags para usar en el diccionario y no 
 ```
 
 
-4. Por último, ya con la recepción y validación del modelo terminado, es necesario enviarlo a almacenar. La encargada de todas las operaciones relacionadas con la base de datos es la API que en este repositorio se encuentra en la carpeta [API](/API). Esto se hace en el método `upload_to_database()` del archivo [upload_database.py]() y nuevamente podemos extender o reemplazar. Para extender es necesario agregar lo siguiente, donde:
+4. Por último, ya con la recepción y validación del modelo terminado, es necesario enviarlo a almacenar. La encargada de todas las operaciones relacionadas con la base de datos es la API que en este repositorio se encuentra en la carpeta [API](/API). Esto se hace en el método `upload_to_database()` del archivo [upload_database.py](/Suscriber/upload_database.py) y nuevamente podemos extender o reemplazar. Para extender es necesario agregar lo siguiente, donde:
 
 1. El tópico de la priemra linea es el agrgado [aqui](#nuevo-topico).
 2. Los nombres de las credenciales de la siguiente línea son [estas](#credenciales-db).
@@ -252,7 +252,7 @@ class ExamplePayloadTags(Enum): # (6) Los tags para usar en el diccionario y no 
 
 Para terminar la adopción de una nueva aplicación es necesario adaptar la API para que pueda almacenar el nuevo módelo en la nueva base de datos.
 
-1. Lo primero es agregar al enum PaylaodTypes en el archivo de [constants.py]()
+1. Lo primero es agregar al enum PaylaodTypes en el archivo de [constants.py](/API/constants.py)
 
 ![new-vars](imagenes/topics-api.png)
 
@@ -260,7 +260,7 @@ Para terminar la adopción de una nueva aplicación es necesario adaptar la API 
 
 
 
-3. Lo primero es, al igual que el suscriber, agregarle la habilidad de recibir este nuevo mensaje. Para eso, al ser una API debemos agrgarle un nuevo _endpoint_. Esto se hace en el archivo principal [app.py]()
+3. Lo primero es, al igual que el suscriber, agregarle la habilidad de recibir este nuevo mensaje. Para eso, al ser una API debemos agrgarle un nuevo _endpoint_. Esto se hace en el archivo principal [app.py](/API/app.py)
 
 
 
