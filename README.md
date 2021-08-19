@@ -276,7 +276,7 @@ donde los valores se pueden obtener de [aquí](#credenciales-db).
 TODO
 ```
 
-4. Ahora es necesario que conozca el modelo que va a guardar en la base de datos (que no es lo mismo que el modelo de datos del Suscriber, cada entidad representa un objeto en su propia forma y es independiente de la otra). Y este tambien se  agregana en un archivo *example_payload.py* a la carpeta [model](/API/model/) pero con algunos cambios ya que este es EL MODELO QUE SE GUARDARA EN LA BASE, es decir, con los elementos que definí en el [tables_creator.sql](/Db/tables_creator.sql#L28), por lo que también tengo un campo de fecha. Además tengo 2 agregados. 
+4. Ahora es necesario que conozca el modelo que va a guardar en la base de datos (que no es lo mismo que el modelo de datos del Suscriber, cada entidad representa un objeto en su propia forma y es independiente de la otra). Y este tambien se  agregana en un archivo *example_payload.py* a la carpeta [model](/API/model/) pero con algunos cambios ya que este es EL MODELO QUE SE GUARDARA EN LA BASE, es decir, con los elementos que definí en el [tables_creator.sql](/Db/tables_creator.sql#L28), por lo que también tengo un campo de fecha. Además tengo 2 agregados: 
 
 	a. Una constante `EXAMPLE_TABLE_NAME = "measurement"` con el nombre de la tabla donde se insertará. (El mismo se definió al correr los scripts de creación de la base [aquí](/Db/tables_creator.sql#L24)).
 
@@ -289,7 +289,7 @@ INSERT INTO measurement (package_id, segment_id, date, position, temperature) VA
 Donde es importante notar que primero se indican todas las columnas y luego en los valores se indica con `%s` que esos campos se completarán durante la ejecución con `strings`.
 
 
-De esta manera, el archivo quedaría:
+De esta manera, el archivo [example_payload](/API/model/example_payload.py) para la base de datos quedaría:
 
 ```
 from enum import Enum
@@ -328,10 +328,8 @@ class ExamplePayloadTags(Enum): # (7) Los tags para usar en el diccionario y no 
 5. Por último, al igual que en el Suscriber, hay que agregar la orden para qu en cada recepción se construya y el objeto a guardar. Esto se hace en el archivo [segment.py](/API/model/segment.py), en el método [`build_payload()`](/API/model/segment.py#L20). Nuevamente puede extenderse para funcionar para este modelo y otros o reeplazar alguno de los existentes en el codigo que ya no se utilicen.
 
 ```
-        elif payload_type == Topics.EXAMPLE.value:
-            return example_payload.ExamplePayload(**payload)
-```
-TODO
+elif payload_type == Topics.EXAMPLE.value:
+    return example_payload.ExamplePayload(**payload)
 ```
 
 # Propuestas
