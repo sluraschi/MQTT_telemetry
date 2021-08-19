@@ -162,7 +162,7 @@ Por otro lado, el tópico al que se publica se indica por párametro al iniciar 
 El Suscriber requiere más actualizacioens para un nuevo uso: 
 
 <a name="nuevo-topico"></a>
-1. Lo primero es agregar el nuevo tópico a la lista de tópicos conocidos por el Suscriber. Esto se encuentra en el archivo [topics.py_]() como un **Enum**:
+1. Lo primero es agregar el nuevo tópico a la lista de tópicos conocidos por el Suscriber. Esto se encuentra en el archivo [topics.py](/Suscriber/topics.py) como un **Enum**:
 
 	<img src="imagenes/suscriber-topics.png" alt="drawing" height="150"/>  
 
@@ -178,16 +178,21 @@ class Topics(Enum):
 
 <a name="nuevo-modelo"></a>
 
-2. Ahora que puede recibir mensajes del tópico es necesario agregar un módelo para validar la recepción. Para eso vamos a crear un archivo *XXXX_payload.py* dentro de la carpeta [model](/Suscriber/model). En nuestro ejemplo lo vamos a llamar *example_payload.py* ([aquí](/Suscriber/model/example_payload.py)) y dentro del mismo es necesario definir su clase **que debe heredar la clase Payload** y tener: 
-	a) un metodo _parse_payload()_ que defina como se deben leer los datos del payload, 
+2. Ahora que puede recibir mensajes del tópico es necesario agregar un módelo para validar la recepción. Para eso vamos a crear un archivo *XXXX_payload.py* dentro de la carpeta [model](/Suscriber/model). En nuestro ejemplo lo vamos a llamar *example_payload.py* y dentro del mismo es necesario definir su clase **que debe heredar la clase Payload** y tener: 
+
+	a) un metodo _parse_payload()_ que defina como se deben leer los datos del payload,
+
 	b) un constructor que lo utilice,
-	b) una clase Enum con las etiquetas,
-	c) un metodo to_dict() que devuelva los atributos de la clase en forma de diccionario, 
-	d) un metodo to_tuple() que devuelva los atributos de la clase en forma de n-upla. 
+	
+    c) una clase Enum con las etiquetas,
+	
+    d) un metodo to_dict() que devuelva los atributos de la clase en forma de diccionario, 
+	
+    e) un metodo to_tuple() que devuelva los atributos de la clase en forma de n-upla. 
 
 Aca es donde se pierde la generalidad del sistema ya que hasta este punto cualquier cosa que se transmita se iba a recibir, peor ahora es cuando se valída la información frente a un modelo de datos.
 
-En nuestro ejemplo, el archivo *example_payload.py* sería:
+En nuestro ejemplo, el archivo [*example_payload.py*](/Suscriber/model/example_payload.py) sería:
 
 ```
 from enum import Enum
@@ -226,7 +231,7 @@ class ExamplePayloadTags(Enum): # (6) Los tags para usar en el diccionario y no 
 
 ```
 
-3. Una vez creado el modelo y sus reglas de parseo hay que agregar la orden para qu en cada recepción se construya y efectivamente se valide el formato. Esto se hace en el archivo [segments.py](/Suscriber/model/segments.py), en el método `build_payload()`. Nuevamente puede extenderse para funcionar para este modelo y otros o reeplazar alguno de los existentes en el codigo que ya no se utilicen. Si lo extendemos es simplemente agregar las siguientes lineas, donde es importante destacar que se hace referencia al topico agregado [aqui](#nuevo-topico):
+3. Una vez creado el modelo y sus reglas de parseo hay que agregar la orden para qu en cada recepción se construya y efectivamente se valide el formato. Esto se hace en el archivo [segments.py](/Suscriber/model/segment.py), en el método [`build_payload()`](/Suscriber/model/segment.py#L20). Nuevamente puede extenderse para funcionar para este modelo y otros o reeplazar alguno de los existentes en el codigo que ya no se utilicen. Si lo extendemos es simplemente agregar las siguientes lineas, donde es importante destacar que se hace referencia al topico agregado [aqui](#nuevo-topico):
 
 ```
         elif payload_type == Topics.EXAMPLE.value:
