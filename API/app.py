@@ -9,6 +9,31 @@ import constants
 app = Flask(__name__)
 
 
+@app.route('/example', methods=['POST'])    # (1) url del endpoint
+def upload_temp_and_humidity(): # (2) nobmre del metodo
+    if not request.json:
+        return Response(response="{'error': 'Missing package'}", status=400)
+    try:
+        pack = package.Package(constants.PayloadTypes.example.name, **request.json['package']) # (3) Tipo de Payload a recibir
+        credentials = db_credentials.DbCredentials(**request.json['Db_connection'])
+    except TypeError as e:
+        return Response(response="malformed http body", status=400)
+
+    # Establish connection
+    try:
+        session_instance = db_operations.DbSession(credentials, constants.EXAMPLE_DATABASE_HOST, constants.EXAMPLE_DATABASE)    # (4) Nuevo host y base de datos
+    except (Exception, psycopg2.Error) as error:
+        print("Database authentication failed")
+        return Response(response="Database authentication failed", status=401)
+
+    try:
+        session_instance.upload_package(pack)
+    except (Exception, psycopg2.Error) as error:
+        print("Failed to insert records with error:", error)
+        return Response(response=f"Failed to insert records with error: {error}", status=400)
+    return Response(response="Package stored successfully", status=200)
+
+
 @app.route('/temp-hum', methods=['POST'])
 def upload_temp_and_humidity():
     if not request.json:

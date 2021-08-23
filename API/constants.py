@@ -1,7 +1,7 @@
 from enum import Enum
 
-EXAMPLE_DATABASE_HOST = 
-EXAMPLE_DATABASE = 
+EXAMPLE_DATABASE_HOST = "ec2-34-202-54-225.compute-1.amazonaws.com"
+EXAMPLE_DATABASE = "d720d6kdnnnfuc"
 
 SEISMIC_DATABASE_HOST = "ec2-174-129-254-216.compute-1.amazonaws.com"
 SEISMIC_DATABASE = "dffja4igmjagb2"

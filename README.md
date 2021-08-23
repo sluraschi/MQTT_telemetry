@@ -145,11 +145,12 @@ El sistema esta pensado para funcionar con el mismo broker luego de su creación
 
 El broker se configura en el archivo [_config.py_](/Publisher/config.py) con el host y usuario de acceso que se indica en el broker:
 
-![new-vars](imagenes/detail-broker.png)
+<img src="imagenes/detail-broker.png" alt="drawing" height="400"/>  
 
 Por otro lado, el tópico al que se publica se indica por párametro al iniciar el servicio dentro del equipo. Ubicado dentro del directorio, esto se haría con el comando `python3 main.py <topico>` pero dentro del equipo la publicación está automatizada como un servicio del sistema, por lo que hay que crear una unidad de servicio como se indica en la **sección 7.2.5.2 del Trabajo Profesional** presentado y presente [aquí]().
 
-![new-vars](imagenes/service_definition.png)
+<img src="imagenes/service_definition.png" alt="drawing" height="250"/>  
+
 
 ---
 
@@ -166,15 +167,15 @@ El Suscriber requiere más actualizacioens para un nuevo uso:
 
 	<img src="imagenes/suscriber-topics.png" alt="drawing" height="150"/>  
 
-En nuestro ejemplo, dado que creamos el topico `/example`, el Enum resultante sería (o podrían quitarse los existentes si es que esas aplicaciones no son más utilizadas, a gusto del consumidor):
+    En nuestro ejemplo, dado que creamos el topico `/example`, el Enum resultante sería (o podrían quitarse los existentes si es que esas aplicaciones no son más utilizadas, a gusto del consumidor):
 
-```
-class Topics(Enum):
-    SEISMIC = "/pi/test"
-    T_AND_H = "/pi/temp"
-    ULTRASOUND = "/pi/ultrasound"
-	EXAMPLE = "/example'
-```
+    ```
+    class Topics(Enum):
+        SEISMIC = "/pi/test"
+        T_AND_H = "/pi/temp"
+        ULTRASOUND = "/pi/ultrasound"
+        EXAMPLE = "/example'
+    ```
 
 <a name="nuevo-modelo"></a>
 
@@ -190,46 +191,46 @@ class Topics(Enum):
 	
     e) un método [to_tuple()](/Suscriber/model/example_payload.py#L26) que devuelva los atributos de la clase en forma de n-upla. 
 
-Acá es donde se pierde la generalidad del sistema ya que hasta este punto cualquier cosa que se transmita se iba a recibir, peor ahora es cuando se valída la información frente a un modelo de datos.
+    Acá es donde se pierde la generalidad del sistema ya que hasta este punto cualquier cosa que se transmita se iba a recibir, peor ahora es cuando se valída la información frente a un modelo de datos.
 
-En nuestro ejemplo, el archivo [*example_payload.py*](/Suscriber/model/example_payload.py) sería:
+    En nuestro ejemplo, el archivo [*example_payload.py*](/Suscriber/model/example_payload.py) sería:
 
-```
-from enum import Enum
-from model.payload import Payload
-
-
-def parse_payload(payload): # (1) Como dijimos, el payload es: DXXTXX, aca lo parseo a 2 variables separadas
-    if payload == "FAIL":
-        d_measure = None
-        t_measure = None
-    else:
-        d_position = payload.upper().index("D")
-        t_position = payload.upper().index("T")
-        t_measure = payload[t_position + 1:]
-        d_measure = payload[d_position + 1:t_position]
-    return [d_measure, t_measure]
+    ```
+    from enum import Enum
+    from model.payload import Payload
 
 
-class ExamplePayload(Payload):  # (2) Aqui se indica la herencia de la clase Payload
-
-    def __init__(self, payload):  # (3) En el mismo constructor se indican los atributos de la clase y se parsea el paylaod
-        self.distance, self.temperature = parse_payload(payload)
-
-    def to_dict(self):  # (4) Devuelve de la forma {tag1: atributo1, tag2: atributo2, ...}
-        return {ExamplePayloadTags.distance.name: self.distance,
-                ExamplePayloadTags.temperature.name: self.temperature}
-
-    def to_tuple(self): # (5) Devuelve de la forma (atributo1, atributo2, ...)
-        return (self.distance,
-                self.temperature)
+    def parse_payload(payload): # (1) Como dijimos, el payload es: DXXTXX, aca lo parseo a 2 variables separadas
+        if payload == "FAIL":
+            d_measure = None
+            t_measure = None
+        else:
+            d_position = payload.upper().index("D")
+            t_position = payload.upper().index("T")
+            t_measure = payload[t_position + 1:]
+            d_measure = payload[d_position + 1:t_position]
+        return [d_measure, t_measure]
 
 
-class ExamplePayloadTags(Enum): # (6) Los tags para usar en el diccionario y no manejar stings que llevan a errores humanos
-    distance = 1
-    temperature = 2
+    class ExamplePayload(Payload):  # (2) Aqui se indica la herencia de la clase Payload
 
-```
+        def __init__(self, payload):  # (3) En el mismo constructor se indican los atributos de la clase y se parsea el paylaod
+            self.distance, self.temperature = parse_payload(payload)
+
+        def to_dict(self):  # (4) Devuelve de la forma {tag1: atributo1, tag2: atributo2, ...}
+            return {ExamplePayloadTags.distance.name: self.distance,
+                    ExamplePayloadTags.temperature.name: self.temperature}
+
+        def to_tuple(self): # (5) Devuelve de la forma (atributo1, atributo2, ...)
+            return (self.distance,
+                    self.temperature)
+
+
+    class ExamplePayloadTags(Enum): # (6) Los tags para usar en el diccionario y no manejar stings que llevan a errores humanos
+        distance = 1
+        temperature = 2
+
+    ```
 
 3. Una vez creado el modelo y sus reglas de parseo hay que agregar la orden para qu en cada recepción se construya y efectivamente se valide el formato. Esto se hace en el archivo [segments.py](/Suscriber/model/segment.py), en el método [`build_payload()`](/Suscriber/model/segment.py#L20). Nuevamente puede extenderse para funcionar para este modelo y otros o reeplazar alguno de los existentes en el codigo que ya no se utilicen. Si lo extendemos es simplemente agregar las siguientes lineas, donde es importante destacar que se hace referencia al topico agregado [aqui](#nuevo-topico):
 
@@ -243,6 +244,7 @@ class ExamplePayloadTags(Enum): # (6) Los tags para usar en el diccionario y no 
 
 1. El tópico de la priemra linea es el agrgado [aqui](#nuevo-topico).
 2. Los nombres de las credenciales de la siguiente línea son [estas](#credenciales-db).
+<a name="nuevo-endpoint"></a>
 3. Y el `"example"` al final en el endpoint debe representar a esta nueva aplicación, lo referenciaremos en el próximo paso. 
 
 ```
@@ -257,24 +259,68 @@ class ExamplePayloadTags(Enum): # (6) Los tags para usar en el diccionario y no 
 
 Para terminar la adopción de una nueva aplicación es necesario adaptar la API para que pueda almacenar el nuevo módelo en la nueva base de datos.
 
+<a name="payloadType-API"></a>
 1. Lo primero es agregar al enum PaylaodTypes en el archivo de [constants.py](/API/constants.py)
 
     <img src="imagenes/topics-api.png" alt="drawing" height="150"/>  
 
+    <a name="DbCons-API"></a>
 2. En este archivo de constantes tambien es necesario agregar host y base de datos nuevas como constantes de la forma: 
 
-```
-EXAMPLE_DATABASE_HOST = <db host>
-EXAMPLE_DATABASE = <db>
-```
+    ```
+    EXAMPLE_DATABASE_HOST = <db host>
+    EXAMPLE_DATABASE = <db>
+    ```
 
-donde los valores se pueden obtener de [aquí](#credenciales-db).
+    donde los valores se pueden obtener de [aquí](#credenciales-db).
 
 3. Luego, al igual que en el suscriber, es necesario agregarle la habilidad de recibir este nuevo mensaje. Para eso, al ser una API debemos agrgarle un nuevo _endpoint_. Esto se hace en el archivo principal [app.py](/API/app.py)
 
-```
-TODO
-```
+    Para eso voy a copiar uno de los metodos ya existentes y hacerle unas modificaciones.
+
+    a) La primera linea `@app.route()` es un decorador, en esta lo importante es que el prime   ro parametro sea `/` + EL MISMO nombre que definimos [aquí](<#nuevo-endpoint), ya que ahí se define la url del nuevo endpoint, en este caso, `/example`.
+
+    b) Además en la línea siguiente vamos a querer cambiar el nombre del método a algo significativo para nuestra aplicación, como podria ser `upload_example`. 
+
+    c) En la línea 4 es necesario actualizar el tipo de payload que se espera recibir, para validar contra nuestro modelo de base de datos. Esto se en el primer argumento del constructor del paquete que se esta llamando en esa linea (`package.Package()`) con el valor agregado en el [paso 1](#payloadType-API) de esta sección.
+
+    ```
+    pack = package.Package(constants.PayloadTypes.example.name, **request.json['package'])
+    ```
+
+    d) Por último, en la línea 11 es necesario actualizar host y base de datos nuevas por las constantes creadas en el [paso 2](#DbCons-API) de esta sección:
+
+    ```
+    session_instance = db_operations.DbSession(credentials, constants.EXAMPLE_DATABASE_HOST, constants.EXAMPLE_DATABASE)
+    ```
+
+    De esta manera, el nuevo método quedaría:
+
+    ```
+    @app.route('/example', methods=['POST'])    # (1) url del endpoint
+    def upload_temp_and_humidity(): # (2) nobmre del metodo
+        if not request.json:
+            return Response(response="{'error': 'Missing package'}", status=400)
+        try:
+            pack = package.Package(constants.PayloadTypes.example.name, **request.json['package']) # (3) Tipo de Payload a recibir
+            credentials = db_credentials.DbCredentials(**request.json['Db_connection'])
+        except TypeError as e:
+            return Response(response="malformed http body", status=400)
+
+        # Establish connection
+        try:
+            session_instance = db_operations.DbSession(credentials, constants.EXAMPLE_DATABASE_HOST, constants.EXAMPLE_DATABASE)    # (4) Nuevo host y base de datos
+        except (Exception, psycopg2.Error) as error:
+            print("Database authentication failed")
+            return Response(response="Database authentication failed", status=401)
+
+        try:
+            session_instance.upload_package(pack)
+        except (Exception, psycopg2.Error) as error:
+            print("Failed to insert records with error:", error)
+            return Response(response=f"Failed to insert records with error: {error}", status=400)
+        return Response(response="Package stored successfully", status=200)
+    ```
 
 4. Ahora es necesario que conozca el modelo que va a guardar en la base de datos (que no es lo mismo que el modelo de datos del Suscriber, cada entidad representa un objeto en su propia forma y es independiente de la otra). Y este tambien se  agregana en un archivo *example_payload.py* a la carpeta [model](/API/model/) pero con algunos cambios ya que este es EL MODELO QUE SE GUARDARA EN LA BASE, es decir, con los elementos que definí en el [tables_creator.sql](/Db/tables_creator.sql#L28), por lo que también tengo un campo de fecha. Además tengo 2 agregados: 
 
@@ -282,55 +328,55 @@ TODO
 
 	b. Y vamos a incluir la query para su inserción a la base de datos en un método `get_insert_query()`, en este caso, si mantenemso los nombres por defecto la query sería:
 
-```
-INSERT INTO measurement (package_id, segment_id, date, position, temperature) VALUES (%s,%s,%s,%s,%s)"
-```
+    ```
+    INSERT INTO measurement (package_id, segment_id, date, position, temperature) VALUES (%s,%s,%s,%s,%s)"
+    ```
 
-Donde es importante notar que primero se indican todas las columnas y luego en los valores se indica con `%s` que esos campos se completarán durante la ejecución con `strings`.
-
-
-De esta manera, el archivo [example_payload](/API/model/example_payload.py) para la base de datos quedaría:
-
-```
-from enum import Enum
-from model.payload import Payload
-
-EXAMPLE_TABLE_NAME = "measurement"  # (1) Nueva constante con el nombre de la tabla
-
-class ExamplePayload(Payload):  # (2) Aqui se indica la herencia de la clase Payload
-
-    def __init__(self, date, temperature, distance):  # (3) En el mismo constructor se indican los atributos de la clase y se parsea el paylaod
-        self.date = datetime.strptime(str(date), '%Y%m%d%H%M%S').strftime('%m/%d/%Y %H:%M:%S')
-        self.temperature = temperature
-        self.distance = distance
-
-    def to_dict(self):  # (4) Devuelve de la forma {tag1: atributo1, tag2: atributo2, ...}
-        return {TemperaturePayloadTags.date.name: self.date,
-                ExamplePayloadTags.distance.name: self.distance,
-                ExamplePayloadTags.temperature.name: self.temperature}
-
-    def to_tuple(self): # (5) Devuelve de la forma (atributo1, atributo2, ...)
-        return (self.date,
-                self.distance,
-                self.temperature)
-
-    def get_insert_query(self): # (6) Nuevo metodo con la query para insertar en la base de datos
-        return f"INSERT INTO {EXAMPLE_TABLE_NAME} (package_id, segment_id, date," \
-               f"position, temperature) VALUES (%s,%s,%s,%s,%s)"
+    Donde es importante notar que primero se indican todas las columnas y luego en los valores se indica con `%s` que esos campos se completarán durante la ejecución con `strings`.
 
 
-class ExamplePayloadTags(Enum): # (7) Los tags para usar en el diccionario y no manejar stings que llevan a errores humanos
-    date = 1
-    distance = 2
-    temperature = 3
-```
+    De esta manera, el archivo [example_payload](/API/model/example_payload.py) para la base de datos quedaría:
+
+    ```
+    from enum import Enum
+    from model.payload import Payload
+
+    EXAMPLE_TABLE_NAME = "measurement"  # (1) Nueva constante con el nombre de la tabla
+
+    class ExamplePayload(Payload):  # (2) Aqui se indica la herencia de la clase Payload
+
+        def __init__(self, date, temperature, distance):  # (3) En el mismo constructor se indican los atributos de la clase y se parsea el paylaod
+            self.date = datetime.strptime(str(date), '%Y%m%d%H%M%S').strftime('%m/%d/%Y %H:%M:%S')
+            self.temperature = temperature
+            self.distance = distance
+
+        def to_dict(self):  # (4) Devuelve de la forma {tag1: atributo1, tag2: atributo2, ...}
+            return {TemperaturePayloadTags.date.name: self.date,
+                    ExamplePayloadTags.distance.name: self.distance,
+                    ExamplePayloadTags.temperature.name: self.temperature}
+
+        def to_tuple(self): # (5) Devuelve de la forma (atributo1, atributo2, ...)
+            return (self.date,
+                    self.distance,
+                    self.temperature)
+
+        def get_insert_query(self): # (6) Nuevo metodo con la query para insertar en la base de datos
+            return f"INSERT INTO {EXAMPLE_TABLE_NAME} (package_id, segment_id, date," \
+                f"position, temperature) VALUES (%s,%s,%s,%s,%s)"
+
+
+    class ExamplePayloadTags(Enum): # (7) Los tags para usar en el diccionario y no manejar stings que llevan a errores humanos
+        date = 1
+        distance = 2
+        temperature = 3
+    ```
 
 5. Por último, al igual que en el Suscriber, hay que agregar la orden para qu en cada recepción se construya y el objeto a guardar. Esto se hace en el archivo [segment.py](/API/model/segment.py), en el método [`build_payload()`](/API/model/segment.py#L20). Nuevamente puede extenderse para funcionar para este modelo y otros o reeplazar alguno de los existentes en el codigo que ya no se utilicen.
 
-```
-elif payload_type == Topics.EXAMPLE.value:
-    return example_payload.ExamplePayload(**payload)
-```
+    ```
+    elif payload_type == Topics.EXAMPLE.value:
+        return example_payload.ExamplePayload(**payload)
+    ```
 
 # Propuestas
 
