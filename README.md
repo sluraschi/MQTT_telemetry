@@ -378,7 +378,7 @@ Para terminar la adopción de una nueva aplicación es necesario adaptar la API 
         return example_payload.ExamplePayload(**payload)
     ```
 
-# Propuestas
+# Propuestas finales
 
 ## 1
 Otra alternativa que es de mi agrado para manejar los nuevos casos sería:
